@@ -6,11 +6,19 @@ import argparse
 
 # parse arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("file", help="python script file", type=str)
+parser.add_argument("interpreter", help="the interpreter the file should be executed with", type=str)
+parser.add_argument("file", help="file to be executed", type=str)
 args = parser.parse_args()
 
-# get file from argparse
+# get args from argparse
+interpreter = args.interpreter
 file = args.file
+
+# check if interpreter is valid
+try:
+    subprocess.call(["which", interpreter])
+except:
+    print(interpreter, "not installed, not in $PATH or typo?")
 
 # This while runs until you press ctr-c
 # This must be changed to a more elegant soution!!!
@@ -34,7 +42,7 @@ while True:
     print(title)
 
     # prepare command for execution
-    command = "python3", file
+    command = interpreter, file
 
     # get time before command execution
     start_time = time.time()
