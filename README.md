@@ -1,6 +1,6 @@
 # runpy
 
- A simple script that executes a python programm everytime it's changed
+ A simple script that executes a given script everytime it's changed
 
 ## Dependencies
 
@@ -27,8 +27,9 @@ sudo mv runpy /usr/local/bin/
 
 ## Usage
 
+Example
 ```
-runpy [FILE]
+runpy python3 script.py
 ```
 
 `Ctr-c` to stop runpy
