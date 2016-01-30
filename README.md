@@ -10,7 +10,7 @@ python3.x
 
 Clone the git repo
 ```
-https://github.com/davidodenwald/runpy.git
+git clone https://github.com/davidodenwald/runpy.git
 ```
 
 Make runpy executable
