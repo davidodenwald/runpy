@@ -34,46 +34,51 @@ if not os.path.isfile(file):
     logger.error(file + " not found")
     exit()
 
-# This while runs until you press ctr-c
-# This must be changed to a more elegant soution!!!
-while True:
-    # read file
-    text = open(file).read()
+# to exit while loop
+try:
 
-    # check if file content has changed
-    # and sleep for 1 sec
-    while text == open(file).read():
-        time.sleep(1)
+    # This while runs until you press ctr-c
+    while True:
+        # read file
+        text = open(file).read()
 
-    # get screen width
-    dims = subprocess.check_output(['stty size', 'r'],
-            shell=True).split()
-    width = int(dims[1].decode('utf-8'))
+        # check if file content has changed
+        # and sleep for 1 sec
+        while text == open(file).read():
+            time.sleep(1)
 
-    # make title string
-    hash_row = "#" * int((width / 2 - 12))
-    title = hash_row, "Executing New Version", hash_row
+        # get screen width
+        dims = subprocess.check_output(['stty size', 'r'],
+                shell=True).split()
+        width = int(dims[1].decode('utf-8'))
 
-    # print title
-    print(title)
+        # make title string
+        hash_row = "#" * int((width / 2 - 12))
+        title = hash_row + " Executing New Version " + hash_row
 
-    # get time before command execution
-    start_time = time.time()
+        # print title
+        print(title)
 
-    # execute command
-    subprocess.call([interpreter, file])
+        # get time before command execution
+        start_time = time.time()
 
-    # make result-title string
-    hash_row = "#" * int((width / 2 - 9))
-    result_title = hash_row, "Performance Data", hash_row
+        # execute command
+        subprocess.call([interpreter, file])
 
-    # print result-title
-    print(result_title)
+        # make result-title string
+        hash_row = "#" * int((width / 2 - 9))
+        result_title = hash_row + " Performance Data " + hash_row
 
-    # print time the command has taken
-    exec_time = str(time.time() - start_time) + " sec"
-    whitespaces = " " * (width - len(exec_time) - 5)
-    print("#", exec_time, whitespaces, "#")
+        # print result-title
+        print(result_title)
 
-    # print end seperator and newline
-    print("#" * width + "\n")
+        # print time the command has taken
+        exec_time = str(time.time() - start_time) + " sec"
+        whitespaces = " " * (width - len(exec_time) - 5)
+        print("#", exec_time, whitespaces, "#")
+
+        # print end seperator and newline
+        print("#" * width + "\n")
+
+except KeyboardInterrupt:
+    pass
