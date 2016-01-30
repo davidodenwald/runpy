@@ -1,15 +1,23 @@
 #!/usr/bin/python3
 
-import subprocess
-import time
 import argparse
+import logging
 import os.path
 import shutil
+import subprocess
+import time
+
+# init logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # parse arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("INTERPRETER", help="the interpreter the file should be executed with", type=str)
-parser.add_argument("FILE", help="file to be executed", type=str)
+parser.add_argument("INTERPRETER",
+        help="the interpreter the file should be executed with",
+        type=str)
+parser.add_argument("FILE",
+        help="file to be executed", type=str)
 args = parser.parse_args()
 
 # get args from argparse
@@ -18,12 +26,12 @@ file = args.FILE
 
 # check if interpreter is valid
 if not shutil.which(interpreter):
-    print("ERROR:", interpreter, "not found!")
+    logger.error(interpreter, "not found")
     exit()
 
 # check if file is valid
 if not os.path.isfile(file):
-    print("ERROR:", file, "not found!")
+    logger.error(file, "not found")
     exit()
 
 # This while runs until you press ctr-c
@@ -38,33 +46,34 @@ while True:
         time.sleep(1)
 
     # get screen width
-    dims = subprocess.check_output(['stty size', 'r'], shell=True).split()
+    dims = subprocess.check_output(['stty size', 'r'],
+            shell=True).split()
     width = int(dims[1].decode('utf-8'))
 
     # make title string
-    title = "#" * int((width / 2 - 12)) + " Executing New Version  " + "#" * int((width / 2 - 12))
+    hash_row = "#" * int((width / 2 - 12))
+    title = hash_row, "Executing New Version", hash_row
 
     # print title
     print(title)
-
-    # prepare command for execution
-    command = interpreter, file
 
     # get time before command execution
     start_time = time.time()
 
     # execute command
-    subprocess.call(command)
+    subprocess.call([interpreter, file])
 
     # make result-title string
-    title = "#" * int((width / 2 - 9)) + " Performance Data " + "#" * int((width / 2 - 9))
+    hash_row = "#" * int((width / 2 - 9))
+    result_title = hash_row, "Performance Data", hash_row
 
     # print result-title
-    print(title)
+    print(result_title)
 
     # print time the command has taken
     exec_time = str(time.time() - start_time) + " sec"
-    print("#", exec_time, " " * (width - len(exec_time) - 5), "#")
+    whitespaces = " " * (width - len(exec_time) - 5
+    print("#", exec_time, whitespaces, "#")
 
     # print end seperator and newline
     print("#" * width + "\n")
