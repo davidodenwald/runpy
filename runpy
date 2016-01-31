@@ -14,24 +14,39 @@ logger = logging.getLogger(__name__)
 # parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("INTERPRETER",
-        help="the interpreter the file should be executed with",
+        help="the interpreter the file should be executed with", 
         type=str)
-parser.add_argument("FILE",
+parser.add_argument("EXEC_FILE",
         help="file to be executed", type=str)
+parser.add_argument('WATCH_FILE', help='file to be watched',
+        nargs='?', default=False)
 args = parser.parse_args()
 
 # get args from argparse
 interpreter = args.INTERPRETER
-file = args.FILE
+exec_file = args.EXEC_FILE
+
+# check if there is a watch-file
+if args.WATCH_FILE:
+    watch_file = args.WATCH_FILE
+
+# use the exec-file for watching
+else:
+    watch_file = exec_file
 
 # check if interpreter is valid
 if not shutil.which(interpreter):
     logger.error(interpreter + " not found")
     exit()
 
-# check if file is valid
-if not os.path.isfile(file):
-    logger.error(file + " not found")
+# check if exec-file is valid
+if not os.path.isfile(exec_file):
+    logger.error(exec_file + " not found")
+    exit()
+
+# check if watch-file is valid
+if not os.path.isfile(watch_file):
+    logger.error(watch_file + " not found")
     exit()
 
 # to exit while loop
@@ -39,12 +54,12 @@ try:
 
     # This while runs until you press ctr-c
     while True:
-        # read file
-        text = open(file).read()
+        # read exec_file
+        text = open(watch_file).read()
 
-        # check if file content has changed
-        # and sleep for 1 sec
-        while text == open(file).read():
+        # check if watch-file content has changed
+        # and sleep for 1 sec if not
+        while text == open(watch_file).read():
             time.sleep(1)
 
         # get screen width
@@ -52,25 +67,19 @@ try:
                 shell=True).split()
         width = int(dims[1].decode('utf-8'))
 
-        # make title string
-        hash_row = "#" * int((width / 2 - 12))
-        title = hash_row + " Executing New Version " + hash_row
-
         # print title
-        print(title)
+        hash_row = "#" * int((width / 2 - 12))
+        print(hash_row + " Executing New Version " + hash_row)
 
         # get time before command execution
         start_time = time.time()
 
         # execute command
-        subprocess.call([interpreter, file])
-
-        # make result-title string
-        hash_row = "#" * int((width / 2 - 9))
-        result_title = hash_row + " Performance Data " + hash_row
+        subprocess.call([interpreter, exec_file])
 
         # print result-title
-        print(result_title)
+        hash_row = "#" * int((width / 2 - 9))
+        print(hash_row + " Performance Data " + hash_row)
 
         # print time the command has taken
         exec_time = str(time.time() - start_time) + " sec"
