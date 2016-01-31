@@ -27,7 +27,7 @@ sudo mv runpy /usr/local/bin/
 
 ## Usage
 
-### Start runpy
+#### Start runpy
 
 ```
 runpy python3 script.py
