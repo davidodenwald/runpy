@@ -54,13 +54,14 @@ try:
 
     # This while runs until you press ctr-c
     while True:
-        # read exec_file
-        text = open(watch_file).read()
 
-        # check if watch-file content has changed
-        # and sleep for 1 sec if not
-        while text == open(watch_file).read():
-            time.sleep(1)
+        # get modification time
+        mod_time = os.stat(watch_file).st_mtime_ns
+
+        # check if modification time has chaned
+        # and sleep for 0.1 sec if not
+        while mod_time == os.stat(watch_file).st_mtime_ns:
+            time.sleep(0.1)
 
         # get screen width
         dims = subprocess.check_output(['stty size', 'r'],
@@ -68,8 +69,7 @@ try:
         width = int(dims[1].decode('utf-8'))
 
         # print title
-        hash_row = "#" * int((width / 2 - 12))
-        print(hash_row + " Executing New Version " + hash_row)
+        print(" Executing New Version ".center(width, "#"))
 
         # get time before command execution
         start_time = time.time()
@@ -78,13 +78,11 @@ try:
         subprocess.call([interpreter, exec_file])
 
         # print result-title
-        hash_row = "#" * int((width / 2 - 9))
-        print(hash_row + " Performance Data " + hash_row)
+        print(" Performance Data ".center(width, "#"))
 
         # print time the command has taken
         exec_time = str(time.time() - start_time) + " sec"
-        whitespaces = " " * (width - len(exec_time) - 5)
-        print("#", exec_time, whitespaces, "#")
+        print(exec_time.center(width))
 
         # print end seperator and newline
         print("#" * width + "\n")
